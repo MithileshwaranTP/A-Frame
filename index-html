@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mithilesh A-Frame Example</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-extras/dist/aframe-extras.min.js"></script>
+</head>
+<body>
+    <a-scene pinch-zoom>
+        <!-- First Camera -->
+        <a-entity id="camera1" position="0 1.6 -5" wasd-controls look-controls>
+            <a-camera></a-camera>
+        </a-entity>
+
+        <!-- Second Camera (Minimap) >
+        <a-entity id="camera2" position="0 50 0" rotation="0 180 0">
+            <a-camera></a-camera>
+        </a-entity -->
+
+        <!-- Minimap Raycaster -->
+        <a-entity id="minimap" raycaster="objects: .clickable;" cursor-listener></a-entity>
+
+        <!-- 3D Model -->
+        <a-gltf-model src="./assets/sporting_village (2).glb"></a-gltf-model>
+
+        <!-- Event Listeners -->
+        <a-entity id="resize-listener" resize-listener></a-entity>
+        
+        <!-- Annotations -->
+        <a-entity position="-1 1.6 -4">
+            <a-entity text="value: Annotation 1; align: center;"></a-entity>
+        </a-entity>
+
+        <a-entity position="2 1.6 -3">
+            <a-entity text="value: Annotation 2; align: center;"></a-entity>
+        </a-entity>
+    </a-scene>
+
+    <script>
+        AFRAME.registerComponent('cursor-listener', {
+            init: function () {
+                this.el.addEventListener('click', (event) => {
+                    const intersection = event.detail.intersection;
+                    if (intersection) {
+                        const camera1 = document.querySelector('#camera1');
+                        camera1.setAttribute('position', intersection.point);
+                    }
+                });
+            }
+        });
+
+        AFRAME.registerComponent('resize-listener', {
+            init: function () {
+                window.addEventListener('resize', () => {
+                    this.resize();
+                });
+            },
+            resize: function () {
+                const camera1 = document.querySelector('#camera1');
+                camera1.components.camera.aspect = window.innerWidth / window.innerHeight;
+                camera1.components.camera.updateProjectionMatrix();
+
+                //const camera2 = document.querySelector('#camera2');
+                //camera2.components.camera.aspect = window.innerWidth / window.innerHeight;
+                //camera2.components.camera.updateProjectionMatrix();
+            }
+        });
+    </script>
+</body>
+</html>
